@@ -2,7 +2,7 @@
   <q-page padding>
     <q-card class="q-pa-md">
       <div class="row items-center q-gutter-sm">
-        <div class="text-h6">Ciudads</div>
+        <div class="text-h6">Ciudades</div>
         <q-space />
         <q-input
           v-model="filtro"
@@ -18,7 +18,7 @@
           </template>
         </q-input>
         <q-btn round unelevated color="primary" icon="add" @click="abrirAlta">
-          <q-tooltip>Nuevo ciudad</q-tooltip>
+          <q-tooltip>Nueva ciudad</q-tooltip>
         </q-btn>
         <q-btn flat round icon="refresh" :loading="ciudadStore.loading" @click="recargar">
           <q-tooltip>Actualizar</q-tooltip>
@@ -130,7 +130,7 @@ async function eliminar() {
       await ciudadStore.borrar(idABorrar.value);
     }
   } catch {
-    notificarError('No se pudo eliminar el ciudad');
+    notificarError('No se pudo eliminar la ciudad');
   } finally {
     confirmandoBaja.value = false;
     recargar();

@@ -3,4 +3,6 @@ export interface ColmenaResponseDto {
   colmenar: string;
   duenio: string;
   viva: boolean;
+  idColmenar: number;
+  idDuenio: number;
 }

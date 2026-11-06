@@ -4,10 +4,12 @@ import { isAxiosError } from 'axios';
 import { api } from 'boot/axios';
 import type { AlimentoResponseDto } from 'src/models/Alimento/AlimentoResponseDto';
 import type { AlimentoRequestDto } from 'src/models/Alimento/AlimentoRequestDto';
+import type { AlimentoSelectListDto } from 'src/models/Alimento/AlimentoSelectListDto';
 import { notificarExito } from 'src/utils/notificar';
 
 export const useAlimentoStore = defineStore('alimento', () => {
   const alimentos = ref<AlimentoResponseDto[]>([]);
+  const alimentosList = ref<AlimentoSelectListDto[]>([]);
   const loading = ref(false);
   const error = ref<string | null>(null);
 
@@ -27,6 +29,18 @@ export const useAlimentoStore = defineStore('alimento', () => {
       } else {
         error.value = 'Error inesperado al obtener los alimentos';
       }
+    } finally {
+      loading.value = false;
+    }
+  }
+  /// GET api/Alimento/SelectList
+  async function fetchSelectList() {
+    loading.value = true;
+    error.value = null;
+    try {
+      const res = await api.get<AlimentoSelectListDto[]>('/Alimentos/SelectList');
+      alimentosList.value = res.data ?? [];
+      return res.data;
     } finally {
       loading.value = false;
     }
@@ -77,5 +91,16 @@ export const useAlimentoStore = defineStore('alimento', () => {
     }
   }
 
-  return { alimentos, loading, error, fetchAll, fetchById, create, update, borrar };
+  return {
+    alimentos,
+    alimentosList,
+    loading,
+    error,
+    fetchAll,
+    fetchSelectList,
+    fetchById,
+    create,
+    update,
+    borrar,
+  };
 });
