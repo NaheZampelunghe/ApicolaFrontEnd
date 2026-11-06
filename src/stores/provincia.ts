@@ -4,10 +4,12 @@ import { isAxiosError } from 'axios';
 import { api } from 'boot/axios';
 import type { ProvinciaResponseDto } from 'src/models/Provincia/ProvinciaResponseDto';
 import type { ProvinciaRequestDto } from 'src/models/Provincia/ProvinciaRequestDto';
+import type { ProvinciaSelectListDto } from 'src/models/Provincia/ProvinciaSelectListDto';
 import { notificarExito } from 'src/utils/notificar';
 
 export const useProvinciaStore = defineStore('provincia', () => {
   const provincias = ref<ProvinciaResponseDto[]>([]);
+  const provinciasList = ref<ProvinciaSelectListDto[]>([]);
   const loading = ref(false);
   const error = ref<string | null>(null);
 
@@ -43,7 +45,18 @@ export const useProvinciaStore = defineStore('provincia', () => {
       loading.value = false;
     }
   }
-
+  /// GET api/Provincias/SelectList
+  async function fetchSelectList() {
+    loading.value = true;
+    error.value = null;
+    try {
+      const res = await api.get<ProvinciaSelectListDto[]>('/Provincias/SelectList');
+      provinciasList.value = res.data ?? [];
+      return res.data;
+    } finally {
+      loading.value = false;
+    }
+  }
   /** POST api/Provinciaes */
   async function create(provincia: ProvinciaRequestDto) {
     loading.value = true;
@@ -77,5 +90,16 @@ export const useProvinciaStore = defineStore('provincia', () => {
     }
   }
 
-  return { provincias, loading, error, fetchAll, fetchById, create, update, borrar };
+  return {
+    provincias,
+    provinciasList,
+    loading,
+    error,
+    fetchAll,
+    fetchById,
+    create,
+    update,
+    borrar,
+    fetchSelectList,
+  };
 });

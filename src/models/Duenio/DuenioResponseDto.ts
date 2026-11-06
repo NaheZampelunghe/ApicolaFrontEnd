@@ -4,4 +4,5 @@ export interface DuenioResponseDto {
   apellido: string;
   renapa: string;
   localidad: string;
+  idLocalidad: number;
 }

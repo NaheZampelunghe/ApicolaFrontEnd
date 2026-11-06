@@ -1,17 +1,26 @@
 <template>
-  <q-page class="flex flex-center">
+  <q-dialog
+    v-model="mostrar"
+    persistent
+    no-esc-dismiss
+    no-backdrop-dismiss
+    transition-show="scale"
+    transition-hide="scale"
+  >
     <q-card class="q-pa-md" style="width: 360px; max-width: 90vw">
-      <q-card-section>
-        <div class="text-h6">Iniciar sesion</div>
+      <q-card-section class="text-center q-pb-none">
+        <q-icon name="menu_book" size="48px" color="primary" />
+        <div class="text-h6 q-mt-sm">Iniciar sesion</div>
       </q-card-section>
 
       <q-card-section>
-        <q-form @submit="onSubmit">
+        <q-form ref="formRef" greedy @submit.prevent="onSubmit">
           <q-input
             v-model="credenciales.email"
             label="Email"
             type="email"
             outlined
+            autofocus
             :rules="[(v: string) => !!v || 'Ingresa el email']"
           />
           <q-input
@@ -45,26 +54,37 @@
         </q-form>
       </q-card-section>
     </q-card>
-  </q-page>
+  </q-dialog>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, watch } from 'vue';
+import type { QForm } from 'quasar';
 import { useAuthStore } from 'stores/auth';
 import type { LoginUserRequestDto } from 'src/models/Auth/LoginUserRequestDto';
 
 const auth = useAuthStore();
-const router = useRouter();
+const formRef = ref<QForm | null>(null);
 
-// El formulario completa el mismo DTO que viaja a la API
+const mostrar = ref(!auth.isAuthenticated);
+watch(
+  () => auth.isAuthenticated,
+  (logueado) => {
+    mostrar.value = !logueado;
+  },
+);
+
 const credenciales = ref<LoginUserRequestDto>({ email: '', password: '' });
 const verPassword = ref(false);
 
 async function onSubmit() {
+  const valido = await formRef.value?.validate();
+  if (!valido) {
+    return;
+  }
   const ok = await auth.login(credenciales.value);
   if (ok) {
-    await router.push('/'); // al home; desde ahi el usuario navega a Autores
+    credenciales.value = { email: '', password: '' };
   }
 }
 </script>

@@ -20,7 +20,7 @@
 
         <q-select
           v-model="form.idProvincia"
-          :options="provinciaStore.provincias"
+          :options="provinciaStore.provinciasList"
           option-value="id"
           option-label="nombre"
           emit-value
@@ -30,14 +30,12 @@
           outlined
           :loading="provinciaStore.loading"
           lazy-rules
-          :rules="[(v: number | null) => v !== null || 'Seleccioná una provincia']"
+          :rules="[(v: number | null) => v !== 0 || 'Seleccioná una provincia']"
         >
           <template #selected>
-            <span v-if="form.idProvincia === null" class="text-grey-7"
-              >Seleccione una provincia</span
-            >
+            <span v-if="form.idProvincia === 0" class="text-grey-7">Seleccione una provincia</span>
             <span v-else>
-              {{ provinciaStore.provincias.find((p) => p.id === form.idProvincia)?.nombre }}
+              {{ provinciaStore.provinciasList.find((p) => p.id === form.idProvincia)?.nombre }}
             </span>
           </template>
         </q-select>
@@ -71,19 +69,15 @@ const ciudadStore = useCiudadStore();
 const provinciaStore = useProvinciaStore();
 const formRef = ref<QForm | null>(null);
 
-type CiudadForm = Omit<CiudadRequestDto, 'idProvincia'> & {
-  idProvincia: number | null;
-};
-
-const form = ref<CiudadForm>({
+const form = ref<CiudadRequestDto>({
   id: 0,
   nombre: '',
-  idProvincia: null,
+  idProvincia: 0,
 });
 
 onMounted(async () => {
   // Primero las provincias, así el combo ya tiene opciones cuando se asigna el valor
-  await provinciaStore.fetchAll();
+  await provinciaStore.fetchSelectList();
 
   if (props.editId) {
     const ciudad = await ciudadStore.fetchById(props.editId);
@@ -103,7 +97,7 @@ async function onSubmit() {
     return;
   }
   const idProvincia = form.value.idProvincia;
-  if (idProvincia === null) {
+  if (idProvincia === 0) {
     return;
   }
   const payload: CiudadRequestDto = {

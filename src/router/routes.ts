@@ -6,16 +6,10 @@ const routes: RouteRecordRaw[] = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('pages/IndexPage.vue') },
-      { path: '/login', component: () => import('pages/Auth/LoginPage.vue') },
       // requiresAuth: el guard del router (router/index.ts) exige sesion iniciada
       {
         path: '/alimentos',
         component: () => import('pages/Alimento/AlimentosPage.vue'),
-        meta: { requiresAuth: true },
-      },
-      {
-        path: '/categorias',
-        component: () => import('pages/Categoria/categoriasPage.vue'),
         meta: { requiresAuth: true },
       },
       {
@@ -34,13 +28,8 @@ const routes: RouteRecordRaw[] = [
         meta: { requiresAuth: true },
       },
       {
-        path: '/curado-alimentado',
-        component: () => import('pages/CuradoAlimentado/curadoAlimentadoPage.vue'),
-        meta: { requiresAuth: true },
-      },
-      {
-        path: '/alimento-medicamento',
-        component: () => import('pages/CuradoMedicamento/curadoMedicamentoPage.vue'),
+        path: '/historialColmenar',
+        component: () => import('pages/HistorialColmenar/historialColmenarPage.vue'),
         meta: { requiresAuth: true },
       },
       {

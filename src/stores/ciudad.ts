@@ -5,9 +5,11 @@ import { api } from 'boot/axios';
 import type { CiudadResponseDto } from 'src/models/Ciudad/CiudadResponseDto';
 import type { CiudadRequestDto } from 'src/models/Ciudad/CiudadRequestDto';
 import { notificarExito } from 'src/utils/notificar';
+import type { CiudadSelectListDto } from 'src/models/Ciudad/CiudadSelectListDto';
 
 export const useCiudadStore = defineStore('ciudad', () => {
   const ciudades = ref<CiudadResponseDto[]>([]);
+  const ciudadesList = ref<CiudadSelectListDto[]>([]);
   const loading = ref(false);
   const error = ref<string | null>(null);
 
@@ -43,7 +45,18 @@ export const useCiudadStore = defineStore('ciudad', () => {
       loading.value = false;
     }
   }
-
+  /// GET api/Ciudades/SelectList
+  async function fetchSelectList() {
+    loading.value = true;
+    error.value = null;
+    try {
+      const res = await api.get<CiudadSelectListDto[]>('/Ciudades/SelectList');
+      ciudadesList.value = res.data ?? [];
+      return res.data;
+    } finally {
+      loading.value = false;
+    }
+  }
   /** POST api/Ciudades */
   async function create(ciudad: CiudadRequestDto) {
     loading.value = true;
@@ -77,5 +90,16 @@ export const useCiudadStore = defineStore('ciudad', () => {
     }
   }
 
-  return { ciudades, loading, error, fetchAll, fetchById, create, update, borrar };
+  return {
+    ciudades,
+    ciudadesList,
+    loading,
+    error,
+    fetchAll,
+    fetchById,
+    create,
+    update,
+    borrar,
+    fetchSelectList,
+  };
 });

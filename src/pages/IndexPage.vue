@@ -9,12 +9,17 @@
       <!-- Con sesion: saludo y acceso a la grilla. Sin sesion: invitacion a ingresar -->
       <q-card-section v-if="auth.isAuthenticated">
         <div class="text-subtitle1">Hola, {{ auth.userName }}</div>
-        <q-btn label="Ver Alimentos" icon="hive" color="primary" class="q-mt-md" to="/alimentos" />
+        <q-btn
+          label="Ver Historial"
+          icon="history"
+          color="primary"
+          class="q-mt-md"
+          to="/historialColmenar"
+        />
       </q-card-section>
 
       <q-card-section v-else>
         <div class="text-subtitle1">Inicia sesion para ver el catalogo</div>
-        <q-btn label="Ingresar" icon="login" color="primary" class="q-mt-md" to="/login" />
       </q-card-section>
     </q-card>
   </q-page>

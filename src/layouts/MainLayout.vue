@@ -1,22 +1,28 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+    <q-header elevated :class="{ 'fondo-bloqueado': !auth.isAuthenticated }">
       <q-toolbar>
-        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
+        <q-btn
+          v-if="auth.isAuthenticated"
+          flat
+          dense
+          round
+          icon="menu"
+          aria-label="Menu"
+          @click="toggleLeftDrawer"
+        />
 
         <q-toolbar-title> Apicola </q-toolbar-title>
 
-        <!-- Con sesion: nombre de usuario y boton para salir. Sin sesion: boton para ingresar -->
         <template v-if="auth.isAuthenticated">
           <q-icon name="person" class="q-mr-xs" />
           <span class="q-mr-md">{{ auth.userName }}</span>
           <q-btn flat dense label="Salir" icon="logout" @click="onLogout" />
         </template>
-        <q-btn v-else flat dense label="Ingresar" icon="login" to="/login" />
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
+    <q-drawer v-if="auth.isAuthenticated" v-model="leftDrawerOpen" show-if-above bordered>
       <q-list>
         <q-item-label header> Links </q-item-label>
 
@@ -24,16 +30,26 @@
       </q-list>
     </q-drawer>
 
-    <q-page-container>
+    <q-page-container :class="{ 'fondo-bloqueado': !auth.isAuthenticated }">
       <router-view />
     </q-page-container>
+    <LoginModal />
   </q-layout>
 </template>
+
+<style scoped>
+.fondo-bloqueado {
+  filter: blur(4px);
+  pointer-events: none;
+  user-select: none;
+}
+</style>
 
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import EssentialLink, { type EssentialLinkProps } from 'components/EssentialLink.vue';
+import LoginModal from 'components/Auth/LoginModal.vue';
 import { useAuthStore } from 'stores/auth';
 
 const auth = useAuthStore();
@@ -41,7 +57,7 @@ const router = useRouter();
 
 async function onLogout() {
   auth.logout();
-  await router.push('/login');
+  await router.push('/');
 }
 
 const linksList: EssentialLinkProps[] = [
@@ -51,12 +67,6 @@ const linksList: EssentialLinkProps[] = [
     icon: 'mdi-hexagon-multiple-outline',
     link: '/alimentos',
   },
-  //{
-  // title: 'Categorias',
-  //caption: 'Listado de categorias',
-  //icon: 'mdi-tag-multiple-outline',
-  //link: '/categorias',
-  //},
   {
     title: 'Ciudades',
     caption: 'Listado de ciudades',
@@ -76,24 +86,16 @@ const linksList: EssentialLinkProps[] = [
     link: '/colmenares',
   },
   {
-    title: 'Cura y Alimento',
-    caption: 'Listado de cura y alimento',
-    icon3: 'mdi-medication-outline',
-    icon2: 'mdi-hexagon-multiple-outline',
-    link: '/curado-alimentado',
+    title: 'Historial de Colmenares',
+    caption: 'Listado de historial de colmenares',
+    icon: 'mdi-history',
+    link: '/historialColmenar',
   },
   {
     title: 'Dueños',
     caption: 'Listado de dueños',
     icon: 'mdi-account-outline',
     link: '/dueño',
-  },
-  {
-    title: 'Medicamento y Alimento',
-    caption: 'Listado de medicamento y alimento',
-    icon3: 'mdi-medication-outline',
-    icon2: 'mdi-hexagon-multiple-outline',
-    link: '/alimento-medicamento',
   },
   {
     title: 'Localidades',
